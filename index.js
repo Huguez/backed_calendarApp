@@ -9,12 +9,9 @@ const app = express();
 // directorio publico
 app.use( express.static( 'public' ) )
 
+// Rutas
+app.use( '/api/auth', require('./routes/auth') );
 
-// app.get('/', ( req, res ) => {
-//     res.json( {
-//         ok:true
-//     } )
-// })
 
 // escuchar peticiones
 app.listen( dotenv.parsed.PORT, () => {
