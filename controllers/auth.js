@@ -2,7 +2,7 @@ const { responce } = require('express')
 const { genSaltSync, hashSync, compareSync } =  require('bcryptjs')
 
 const Usuario = require('../models/UsuarioModel')
-
+const { generaraJWT } = require('../helpers/jwt')
 
 const crearUsuario = async ( req, res = responce ) => {
     try{
@@ -24,9 +24,12 @@ const crearUsuario = async ( req, res = responce ) => {
 
         const user = await usuario.save();
 
+        const token = await generaraJWT( user._id, user.name )
+
         return res.status( 201 ).json( {
             ok: true,
-            user
+            user, 
+            token
         } );
 
     }catch( error ){
@@ -72,11 +75,12 @@ const LoginUsuario = async ( req, res = responce ) => {
             } );
         }
 
-
+        const token = await generaraJWT( user._id, user.name )
 
         return res.status( 202 ).json( {
             ok: true,
-            user
+            user,
+            token
         } );
 
     }catch( error ){
