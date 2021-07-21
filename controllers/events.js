@@ -1,19 +1,23 @@
+const { responce } = require('express')
 
+const Evento = require('../models/EventoModel')
 
-const { response } = require('express')
-
-
-const getEvents = ( req, res = response ) => {
+const getEvents = ( req, res = responce ) => {
     res.status( 200 ).json( {
         ok: true,
         msg: "getEventos"
     } );
 }
 
-const createEvent = ( req, res = response ) => {
+const createEvent = async ( req, res = responce ) => {
+    const { title, notes, start, end } = req.body
+    console.log( title, notes, start, end )
+    const evento  = Evento( { title, notes, start, end } )
+    
     res.status( 200 ).json( {
         ok: true,
-        msg: "create"
+        msg: "create",
+        evento
     } );
 }
 

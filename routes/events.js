@@ -3,20 +3,37 @@
 */ 
 const { Router } = require('express')
 const router = Router()
+const { check } = require( 'express-validator' )
 
-const { validarJWT } = require('../middlewares/validarJWT')
 const { getEvents,
     createEvent,
     updateEvent,
     deleteEvent } = require('../controllers/events')
+const { validarJWT } = require('../middlewares/validarJWT')
+const { validarCampos } = require('../middlewares/validarCampos')
+const { isDate } = require('../helpers/isDate')
 
-router.get( '/getEvents', [validarJWT], getEvents )
+// asi todos los endpoint de aqui para abajo tienen que pasar por validarJWT
+router.use( validarJWT ); // gracias stackoverflow <3
 
-router.post( '/create', [validarJWT], createEvent )
+router.get( '/getEvents', getEvents )
 
-router.put( '/update/:id', [validarJWT], updateEvent )
+router.post( '/create', [ 
+    check( 'title', 'El titulo es obligatorio' ).not().isEmpty(),
+    check( 'start', 'La fecha de inicio es obligatoria ' ).not().isEmpty().custom( isDate ),
+    check( 'start', 'La fecha de inicio es obligatoria ' ).not().isEmpty().custom( isDate ),
+    check( 'end', 'La fecha final es obligatoria ' ).not().isEmpty().custom( isDate ),
+    validarCampos
+], createEvent )
 
-router.delete( '/delete/:id', [validarJWT], deleteEvent )
+router.put( '/update/:id', [ 
+    check( 'title', 'El titulo es obligatorio' ).not().isEmpty(),
+    check( 'start', 'La fecha de inicio es obligatoria ' ).not().isEmpty(),
+    check( 'end', 'La fecha final es obligatoria ' ).not().isEmpty(),
+    validarCampos
+], updateEvent )
+
+router.delete( '/delete/:id', deleteEvent )
 
 
 
