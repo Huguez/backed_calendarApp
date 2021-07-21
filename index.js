@@ -4,7 +4,6 @@ const cors = require('cors')
 
 const { dbConection } = require('./databases/config')
 
-
 //  process.env.PORT  === dotenv.parsed.PORT
 
 //crea el servidor 
@@ -24,6 +23,7 @@ app.use( express.json() )
 
 // Rutas
 app.use( '/api/auth', require('./routes/auth') );
+app.use( '/api/event', require('./routes/events') );
 
 
 // escuchar peticiones
