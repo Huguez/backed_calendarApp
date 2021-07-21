@@ -6,9 +6,9 @@ const { check } = require( 'express-validator' )
 const router = Router()
 const { crearUsuario, renovarToken, LoginUsuario } = require('../controllers/auth')
 const { validarCampos } = require('../middlewares/validarCampos')
+const { validarJWT } = require('../middlewares/validarJWT')
 
-
-router.get('/renew', renovarToken );
+router.get('/renew', [ validarJWT ], renovarToken );
 
 router.post('/', [
     check( 'email', 'El e-mail es obligatorio' ).not().isEmpty().isEmail(),

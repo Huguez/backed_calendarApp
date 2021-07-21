@@ -42,12 +42,13 @@ const crearUsuario = async ( req, res = responce ) => {
     }
 } 
 
+const renovarToken = async ( req, res = responce ) => {
 
-const renovarToken = ( req, res = responce ) => {
+    const token = await generaraJWT( req.uid, req.name )
 
     return res.json( {
         ok:true,
-        msg: "renew token"
+        token
     } );
 
 } 
