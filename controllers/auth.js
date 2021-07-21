@@ -1,19 +1,19 @@
 const { responce } = require('express')
-
+const { validationResult } = require('express-validator')
 
 const crearUsuario = ( req, res = responce ) => {
-    const { name, email, password } = req.body
     
-    if( name.length <= 3 ){
+    const error  = validationResult( req )
+    
+    if( !error.isEmpty() ){
         return res.status( 400 ).json( {
-            ok: false,
-            msg: "El nombre debe de ser mayor a 5 caracteres validos",
-        } );    
+            ok: false, 
+            errors: error.mapped()
+        } )
     }
 
     return res.status( 201 ).json( {
         ok: true,
-        msg: "nuevo usuario",
         user: req.body
     } );
 } 
@@ -29,11 +29,20 @@ const renovarToken = ( req, res = responce ) => {
 } 
 
 const LoginUsuario = ( req, res = responce ) => {
+    const error  = validationResult( req )
     
-    return res.json( {
+    if( !error.isEmpty() ){
+        return res.status( 400 ).json( {
+            ok: false, 
+            errors: error.mapped()
+        } )
+    }
+
+    return res.status( 202 ).json( {
         ok: true,
-        msg: "login"
+        user: req.body
     } );
+
 } 
 
 
