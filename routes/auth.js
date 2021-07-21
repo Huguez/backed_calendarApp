@@ -1,12 +1,18 @@
+/*
+    ruta: /api/auth
+*/ 
+
+
 const { Router } = require('express')
 const router = Router()
+const { crearUsuario, renovarToken, LoginUsuario } = require('../controllers/auth')
 
 
-router.get('/', ( req, res ) => {
-    return res.json( {
-        ok:true
-    } )
-})
+router.get('/renew', renovarToken );
+
+router.post('/', LoginUsuario );
+
+router.post('/new', crearUsuario );
 
 
 module.exports = router
