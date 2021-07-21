@@ -11,14 +11,13 @@ const getEvents = async ( req, res = responce ) => {
             ok: true,
             eventos
         } );
+
     } catch( error ) {
         res.status( 500 ).json( {
-            ok: true,
+            ok: false,
             msg: "Error en el servidor"
         } );
     }
-
-    
 }
 
 const createEvent = async ( req, res = responce ) => {
@@ -38,18 +37,58 @@ const createEvent = async ( req, res = responce ) => {
     } catch( error ){
         console.log( error )
         res.status( 500 ).json( {
-            ok: true,
+            ok: false,
             msg: "Error en el servidor"
         } );
     }
 }
 
-const updateEvent = ( req, res = response ) => {
+const updateEvent = async ( req, res = response ) => {
+    
+    try{
+        const _id = req.params.id
+        
+        const { title, notes, start, end } = req.body;
 
-    res.status( 200 ).json( {
-        ok: true,
-        msg: "update"
-    } );
+        const evento = await Evento.find( { _id } ) // await Evento.findById( _id )
+
+        if( !evento ){
+            return res.status( 404 ).json( {
+                ok: false,
+                msg: "El evento no existe"
+            } );
+        }
+
+        if( evento[0].user._id != req.uid ){
+            return res.status( 403 ).json( {
+                ok: false,
+                msg: "No se puede eliminar eventos de otro usuario",
+                user: evento[0].user._id,
+                uid: req.uid
+            } );    
+        }
+
+        // await evento.updateOne( { _id }, { title, notes, start, end } )
+
+        // await evento.save()
+        const eventoAux = {
+            ...req.body,
+            user: req.uid
+        }
+
+        const eventoUpdate = await Evento.findByIdAndUpdate( _id, eventoAux )
+
+        return res.status( 202 ).json( {
+            ok: true,
+            event:eventoUpdate
+        } );
+    }catch( error ){
+        console.log( error )
+        return res.status( 500 ).json( {
+            ok: false,
+            msg: "Error del servidor"
+        } );
+    }
 }
 
 const deleteEvent = ( req, res = response ) => {
@@ -58,8 +97,6 @@ const deleteEvent = ( req, res = response ) => {
         msg: "delete"
     } );
 }
-
-
 
 module.exports = {
     getEvents,
