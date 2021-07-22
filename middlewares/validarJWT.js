@@ -1,6 +1,6 @@
 const { response } = require('express')
 const jwt = require('jsonwebtoken')
-const dotenv = require('dotenv').config();
+// const dotenv = require('dotenv').config();
 
 const validarJWT = ( req, res = response, next ) => {
 
@@ -15,7 +15,7 @@ const validarJWT = ( req, res = response, next ) => {
     
     try{
         
-        const { uid, name } = jwt.verify( token, dotenv.parsed.SECRET_JWT_SEED )
+        const { uid, name } = jwt.verify( token, process.env.SECRET_JWT_SEED )
 
         req.uid = uid;
         req.name = name;

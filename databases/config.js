@@ -1,9 +1,9 @@
 const { connect } = require('mongoose');
-const dotenv = require('dotenv').config();
+// const dotenv = require('dotenv').config();
 
 const dbConection = async () => {
     try{
-        const cluster = `mongodb+srv://${dotenv.parsed.USER}:${ dotenv.parsed.PASS }@${ dotenv.parsed.DB_CNN }`
+        const cluster = `mongodb+srv://${ process.env.USER}:${ process.env.PASS }@${ process.env.DB_CNN }`
         await connect( cluster, {
             useNewUrlParser: true,
             useUnifiedTopology: true,

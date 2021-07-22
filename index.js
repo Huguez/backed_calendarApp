@@ -1,5 +1,5 @@
 const express = require('express')
-const dotenv = require('dotenv').config();
+// const dotenv = require('dotenv').config();
 const cors = require('cors')
 
 const { dbConection } = require('./databases/config')
@@ -27,6 +27,6 @@ app.use( '/api/event', require('./routes/events') );
 
 
 // escuchar peticiones
-app.listen( dotenv.parsed.PORT, () => {
+app.listen( process.env.PORT, () => {
     console.log( "servidor corriendo!!!" )
 } )
