@@ -92,27 +92,26 @@ const deleteEvent = async ( req, res = response ) => {
     try{
         const _id = req.params.id
         
-        const evento = await Evento.find( { _id } ) // await Evento.findById( _id )
-
-        if( !evento ){
+        const evento = await Evento.findById(  _id ) // await Evento.findById( _id )
+       
+        if( evento.length === 0 ){
             return res.status( 404 ).json( {
                 ok: false,
                 msg: "El evento no existe"
             } );
         }
-
-        if( evento[0].user._id != req.uid ){
+        
+        if( evento.user != req.uid ){
             return res.status( 403 ).json( {
                 ok: false,
                 msg: "No se puede eliminar eventos de otro usuario",
-                user: evento[0].user._id,
+                user: evento.user._id,
                 uid: req.uid
         
             } );    
         }
-
         const eventDel = await Evento.findOneAndDelete( { _id } )
-
+        
         return res.status( 202 ).json( {
             ok: true,
             msg: "evento Borrado",
