@@ -1,4 +1,5 @@
 const { responce } = require('express')
+const { isValid } = require('mongoose').Types.ObjectId;
 
 const Evento = require('../models/EventoModel')
 
@@ -48,9 +49,16 @@ const updateEvent = async ( req, res = response ) => {
     try{
         const _id = req.params.id
         
+        if( !isValid( _id ) ) {
+            return res.status( 404 ).json( {
+                ok: false,
+                msg: "El ID es invalido"
+            } );
+        }
+
         const { title, notes, start, end } = req.body;
 
-        const evento = await Evento.find( { _id } ) // await Evento.findById( _id )
+        const evento = await Evento.findById( { _id } ) // await Evento.findById( _id )
 
         if( !evento ){
             return res.status( 404 ).json( {
@@ -59,11 +67,11 @@ const updateEvent = async ( req, res = response ) => {
             } );
         }
 
-        if( evento[0].user._id != req.uid ){
+        if( evento.user != req.uid ){
             return res.status( 403 ).json( {
                 ok: false,
                 msg: "No se puede eliminar eventos de otro usuario",
-                user: evento[0].user._id,
+                user: evento.user,
                 uid: req.uid
             } );    
         }
@@ -90,11 +98,19 @@ const updateEvent = async ( req, res = response ) => {
 
 const deleteEvent = async ( req, res = response ) => {
     try{
+
         const _id = req.params.id
         
+        if ( !isValid( _id ) ) {
+            return res.status( 404 ).json( {
+                ok: false,
+                msg: "El ID es invalido"
+            } );
+        }
+
         const evento = await Evento.findById(  _id ) // await Evento.findById( _id )
        
-        if( evento.length === 0 ){
+        if( !evento ){
             return res.status( 404 ).json( {
                 ok: false,
                 msg: "El evento no existe"
@@ -111,7 +127,7 @@ const deleteEvent = async ( req, res = response ) => {
             } );    
         }
         const eventDel = await Evento.findOneAndDelete( { _id } )
-        
+
         return res.status( 202 ).json( {
             ok: true,
             msg: "evento Borrado",
