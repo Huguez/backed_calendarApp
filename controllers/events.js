@@ -44,7 +44,7 @@ const createEvent = async ( req, res = responce ) => {
 }
 
 const updateEvent = async ( req, res = response ) => {
-    
+
     try{
         const _id = req.params.id
         
@@ -68,19 +68,16 @@ const updateEvent = async ( req, res = response ) => {
             } );    
         }
 
-        // await evento.updateOne( { _id }, { title, notes, start, end } )
-
-        // await evento.save()
         const eventoAux = {
             ...req.body,
             user: req.uid
         }
 
-        const eventoUpdate = await Evento.findByIdAndUpdate( _id, eventoAux )
+        const eventoUpdate = await Evento.findByIdAndUpdate( _id, eventoAux, { new: true } )
 
         return res.status( 202 ).json( {
             ok: true,
-            event:eventoUpdate
+            event: eventoUpdate
         } );
     }catch( error ){
         console.log( error )
@@ -91,11 +88,44 @@ const updateEvent = async ( req, res = response ) => {
     }
 }
 
-const deleteEvent = ( req, res = response ) => {
-    res.status( 200 ).json( {
-        ok: true,
-        msg: "delete"
-    } );
+const deleteEvent = async ( req, res = response ) => {
+    try{
+        const _id = req.params.id
+        
+        const evento = await Evento.find( { _id } ) // await Evento.findById( _id )
+
+        if( !evento ){
+            return res.status( 404 ).json( {
+                ok: false,
+                msg: "El evento no existe"
+            } );
+        }
+
+        if( evento[0].user._id != req.uid ){
+            return res.status( 403 ).json( {
+                ok: false,
+                msg: "No se puede eliminar eventos de otro usuario",
+                user: evento[0].user._id,
+                uid: req.uid
+        
+            } );    
+        }
+
+        const eventDel = await Evento.findOneAndDelete( { _id } )
+
+        return res.status( 202 ).json( {
+            ok: true,
+            msg: "evento Borrado",
+            event: eventDel
+        } );
+
+    }catch( error ){
+        console.log( error )
+        res.status( 500 ).json( {
+            ok: true,
+            msg: "Error en el servidor"
+        } );
+    }
 }
 
 module.exports = {
